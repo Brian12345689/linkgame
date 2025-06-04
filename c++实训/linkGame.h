@@ -1,6 +1,12 @@
 #pragma once
 #include<graphics.h>
 #include<vector>
+#include<fstream>
+#include<random>
+#include<queue>
+#include<algorithm>
+#include<iostream>
+#include"tool.h"
 
 struct Point {
 	int x, y;
@@ -9,39 +15,99 @@ struct Point {
 			return false;
 		return true;
 	}
+	Point& operator=(const Point& other) {
+		if (this == &other)
+			return *this;
+		this->x = other.x;
+		this->y = other.y;
+		return *this;
+	}
 };
 
 class linkGame
 {
 public:
-	linkGame(int rows, int cols, int width, int height, int blockSize, int leftBound, int topBound);
-	void init();						//��ʼ��
-	void play();						//��ʼ��Ϸ
-	void biuldMap();					//������ͼ
-	void clear(Point a, Point b);		//��������
-	void updateNums();					//��������
-	int findGcd(int a, int b);						//Ѱ�����Լ��
-	void updateWindow();				//���´���
-	void checkOver();					//�����Ϸ�Ƿ����
-	void click();						//�����û�����
-	void displayOver();					//չʾ���㻭��
-	void saveScore();					//������߷�
-	void saveDate();					//ʵʱ��������
-	int getDelay();						//��ȡ�ӳ�
+	linkGame();
+	void init();						//新游戏初始化
+	void init2();						//继续游戏
+	bool play();						//开始游戏
+	void biuldMap();					//初始化地图
+	void clear(Point a, Point b);		//消除数字
+	void updateNums();					//更新数字
+	int findGcd(int a, int b);			//寻找最大公约数
+	void updateWindow();				//更新窗口
+	bool checkWin();					//判断游戏是否胜利
+	void displayLevel();				//展示难度选择界面
+	void displayOver();					//展示游戏结束界面
+	void displayEnter();				//展示进入界面
+	void displayRegister();				//展示注册界面
+	void displayLogin();				//展示登录界面
+	void Descrition();					//展示教程界面
+	void saveScore();					//保存记录
+	void saveDate();					//保存数据
+	bool whetcherConnect(Point a, Point b);				//判断两点是否可连接，记录回溯
+	bool whetcherConnect2(Point a, Point b);				//判断两点是否可连接，不记录回溯
+	void updateShowLines( Point a, Point b);
+	void showLines();					//展示连接线条
+	void getHint();						//获取提示
+	void showBegin();					//展示开始界面
+	int checkLose();					//判断游戏是否结束
+	void Message(int val);				//展示注册或登录成功或失败的信息
+	void showRank(int level);			//排行榜界面
 
-private:
-	int rows, cols, width, height, blockSize, leftBound, topBound;
-	int minTime;
-	int curTime;
-	int delay;
-	int whetherOver;
-	bool whetherUpdate;
 	int level;
+	unsigned long long curTime;
+	bool see;								//密码可见
+	bool see2;
+	std::vector<std::vector<int>>mp;		
+	std::vector<std::vector<int>>nums;
+	std::vector<std::vector<int>>lines;
+	std::vector<std::vector<int>>choose;
+	std::vector<std::vector<Point>>pre;		//前驱节点
+	std::vector<std::vector<int>>dir;		//记录方向
+
+private:		
+
+	int MAX;
+	int rows, cols;
+	int leftBound, topBound;
+	unsigned long long minTime;
+	int whetherOver;
+	bool music;
+	
+	IMAGE returnBotton;
+	IMAGE beginImage;
+	IMAGE levelchoose;
+	IMAGE beginBotton, beginBotton_choose;
+	IMAGE continueBotton, continueBotton_choose;
+	IMAGE musicBotton;
 	IMAGE background;
 	IMAGE block;
 	IMAGE block_choose;
-	std::vector<std::vector<int>>mp;
-	std::vector<std::vector<int>>nums;
-	std::vector<std::vector<int>>choose;
+	IMAGE overLose;
+	IMAGE overWin;
+	IMAGE line[6];
+	IMAGE hint;
+	IMAGE noConnect;
+	IMAGE intro;
+	IMAGE quit;
+	IMAGE again;
+	IMAGE Register;
+	IMAGE Login;
+	IMAGE registerBotton;
+	IMAGE loginBotton;
+	IMAGE keyWrong;
+	IMAGE noAcount;
+	IMAGE registerSuccess;
+	IMAGE keyTypeWrong;
+	IMAGE acountTypeWrong;
+	IMAGE keyUnmatch;
+	IMAGE canSee;
+	IMAGE notSee;
+	IMAGE acountExist;
+	IMAGE logOut;
+	IMAGE rank;
+	IMAGE rankBotton;
 };
+
 

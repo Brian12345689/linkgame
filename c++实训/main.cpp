@@ -1,8 +1,12 @@
 #include<graphics.h>
-#include"linkGame.h"
-
+#include"Click.h"
+#include<string>
+#include<iostream>
 int main()
 {
-	linkGame game(10, 10, 961, 975, 45, 255, 254);
-	game.play();
+	Click c;
+	c.update();
+	
+
+
 }
