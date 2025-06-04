@@ -1,4 +1,5 @@
 #include "Click.h"
+#include<string>
 
 const int MAXS[4] = { 50, 100, 200, 350 };
 const int row[4] = { 4, 6 , 8, 10 }, col[4] = { 4, 6, 8, 10};
@@ -21,7 +22,7 @@ const int return_x = 590, return_y = 530;
 const int return_x2 = 266, return_y2 = 613;
 const int levelup_x = 483, levelup_y = 394;
 const int leveldown_x = 246, leveldown_y = 392;
-const int again_x = 300, again_y = 645;
+const int again_x = 300, again_y = 630;
 const int play_x = 266, play_y = 510;
 const int key_x = 313, key_y = 441;
 const int acount_x = 313, acount_y = 381;
@@ -286,6 +287,7 @@ void Click::loginPicture(ExMessage& msg)
 			int val = user.checkLogin();
 			//µÇÂ¼³É¹¦
 			if (val == 6) {
+				game.getName(user.acount);
 				user.init();
 				picture = begin;
 			}
@@ -451,3 +453,4 @@ int Click::getDelay()
 	}
 	
 }
+

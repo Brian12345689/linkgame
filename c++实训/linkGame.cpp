@@ -24,7 +24,7 @@ const int levelup_x = 483, levelup_y = 394;
 const int leveldown_x = 246, leveldown_y = 392;
 const int input_x = 125, input_y = 190;
 const int level_x = 367, level_y = 370;
-const int again_x = 300, again_y = 645;
+const int again_x = 300, again_y = 630;
 const int register_x = 300, register_y = 556;
 const int login_x = 300, login_y = 425;
 const int key_x = 313, key_y = 441;
@@ -460,7 +460,7 @@ void linkGame::Descrition()
 void linkGame::saveScore()
 {
 	char record[20];
-	sprintf_s(record, sizeof(record), "maxscore%d.txt", level);
+	sprintf_s(record, sizeof(record), "%smaxscore%d.txt", name, level);
 	if (curTime < minTime || minTime == 0) {
 		
 		std::ofstream file(record);
@@ -747,6 +747,12 @@ void linkGame::showRank(int level)
 	sprintf_s(numText, sizeof(numText), "%d", level + 1);
 	outtextxy(330, 50, numText);
 	EndBatchDraw();
+}
+
+void linkGame::getName(char s[12])
+{
+	for(int i = 0; i < 12; i++)
+		name [i] = s[i];
 }
 
 

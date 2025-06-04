@@ -54,6 +54,7 @@ public:
 	int checkLose();					//判断游戏是否结束
 	void Message(int val);				//展示注册或登录成功或失败的信息
 	void showRank(int level);			//排行榜界面
+	void getName(char s[12]);		//获取用户名
 
 	int level;
 	unsigned long long curTime;
@@ -74,6 +75,8 @@ private:
 	unsigned long long minTime;
 	int whetherOver;
 	bool music;
+
+	char name[12];
 	
 	IMAGE returnBotton;
 	IMAGE beginImage;
