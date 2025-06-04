@@ -1,4 +1,4 @@
-#include "linkGame.h"
+﻿#include "linkGame.h"
 
 const int prime[] = { 2, 2 ,2 ,2, 2, 2, 3 ,3, 3, 3, 5, 5, 5, 7, 11, 13, 17, 19, 23, 29 };
 const int MAXS[4] = { 50, 100, 200, 350 };

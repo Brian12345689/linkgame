@@ -1,11 +1,11 @@
-#include "Click.h"
+ï»¿#include "Click.h"
 #include<string>
 
 const int MAXS[4] = { 50, 100, 200, 350 };
 const int row[4] = { 4, 6 , 8, 10 }, col[4] = { 4, 6, 8, 10};
 const int width = 800, height = 950, blockSize = 55, LeftBound[4] = { 174,135,99,25 }, TopBound[4] = { 304,284,252,119 };
 
-//ÌùÍ¼×ø±ê
+//è´´å›¾åæ ‡
 const int DELAY = 30;
 const int music_x = 0, music_y = 0;
 const int time_x = 625, time_y = 175;
@@ -44,13 +44,13 @@ void Click::update()
 {
 	int timer = 0;
 	while (true) {
-		click();				//Èç¹ûÓÃ»§ÓÐµã»÷»áÊ¹whetherupdate±ä³Étrue
-		timer += getDelay();	//»ñÈ¡Á½´ÎwhileÑ­»·¼äµÄÑÓ³Ù
+		click();				//å¦‚æžœç”¨æˆ·æœ‰ç‚¹å‡»ä¼šä½¿whetherupdateå˜æˆtrue
+		timer += getDelay();	//èŽ·å–ä¸¤æ¬¡whileå¾ªçŽ¯é—´çš„å»¶è¿Ÿ
 		if (timer > delay) {
 			timer = 0;
 			whetherUpdate = true;
 		}
-		//äÖÈ¾»­Ãæ
+		//æ¸²æŸ“ç”»é¢
 		if (whetherUpdate) {
 			whetherUpdate = false;
 			show();
@@ -115,7 +115,7 @@ void Click::click()
 {
 	ExMessage msg; 
 	if (peekmessage(&msg)) {
-		if (msg.message == WM_LBUTTONDOWN) {	//Êó±ê×ó¼ü
+		if (msg.message == WM_LBUTTONDOWN) {	//é¼ æ ‡å·¦é”®
 			switch (picture)
 			{
 			case Enter:
@@ -177,13 +177,13 @@ void Click::playPicture(ExMessage& msg)
 		msg.y > topBound && msg.y < topBound + rows * blockSize) {
 		int col = (msg.x - leftBound) / blockSize;
 		int row = (msg.y - topBound) / blockSize;
-		//µÚ¶þ´Îµã»÷¸ñ×Ó
+		//ç¬¬äºŒæ¬¡ç‚¹å‡»æ ¼å­
 		if (whetherChoose) {
 			Point cur = { row, col };
 			if (cur != lastchoose) {
 				whetherChoose = false;
 
-				//Çå¿ÕchooseÊý×é
+				//æ¸…ç©ºchooseæ•°ç»„
 				for (int i = 0; i < rows; i++)
 					for (int j = 0; j < cols; j++)
 					{
@@ -194,7 +194,7 @@ void Click::playPicture(ExMessage& msg)
 
 			}
 		}
-		//µÚÒ»´Îµã»÷¸ñ×Ó
+		//ç¬¬ä¸€æ¬¡ç‚¹å‡»æ ¼å­
 		else {
 			if (game.nums[row][col] != 1) {
 				lastchoose = { row, col };
@@ -204,7 +204,7 @@ void Click::playPicture(ExMessage& msg)
 		}
 	}
 
-	//µã»÷ÌáÊ¾
+	//ç‚¹å‡»æç¤º
 	if (msg.x > hint_x && msg.x < hint_x + 200 &&
 		msg.y > hint_y && msg.y < hint_y + 60) {
 		for (int i = 0; i < rows; i++)
@@ -216,7 +216,7 @@ void Click::playPicture(ExMessage& msg)
 		game.getHint();
 	}
 
-	//µã»÷·µ»Ø
+	//ç‚¹å‡»è¿”å›ž
 	if (msg.x > return_x && msg.x < return_x + 200 &&
 		msg.y > return_y && msg.y < return_y + 60) {
 		picture = begin;
@@ -285,7 +285,7 @@ void Click::loginPicture(ExMessage& msg)
 		if (msg.x > sure_x && msg.x < sure_x + 120 &&
 			msg.y > sure_y && msg.y < sure_y + 50) {
 			int val = user.checkLogin();
-			//µÇÂ¼³É¹¦
+			//ç™»å½•æˆåŠŸ
 			if (val == 6) {
 				game.getName(user.acount);
 				user.init();
