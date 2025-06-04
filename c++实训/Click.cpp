@@ -145,6 +145,9 @@ void Click::click()
 			case message:
 				messagePicture(msg);
 				break;
+			case cancel:
+
+				break;
 			case rank:
 				rankPicture(msg);
 				break;
@@ -288,7 +291,6 @@ void Click::loginPicture(ExMessage& msg)
 			//登录成功
 			if (val == 6) {
 				game.getName(user.acount);
-				user.init();
 				picture = begin;
 			}
 			else {
@@ -344,6 +346,10 @@ void Click::rankPicture(ExMessage& msg)
 void Click::introPicture(ExMessage& msg)
 {
 
+}
+
+void Click::cancelPicture()
+{
 }
 
 void Click::registerPicture(ExMessage& msg)
@@ -431,6 +437,7 @@ void Click::beginPicture(ExMessage& msg)
 	else if (msg.x > logout_x && msg.x < logout_x + 200 &&
 		msg.y > logout_y && msg.y < logout_y + 60) 
 	{
+		user.init();
 		picture = Enter;
 	}
 }

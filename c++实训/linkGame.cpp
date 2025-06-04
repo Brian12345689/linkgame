@@ -44,6 +44,7 @@ linkGame::linkGame()
 	curTime = 0;
 	see = 0;
 	see2 = 0;
+
 	char record[20];
 	sprintf_s(record, sizeof(record), "maxscore%d.txt", level);
 	std::ifstream file(record);
@@ -51,9 +52,17 @@ linkGame::linkGame()
 		minTime = 0;
 	}
 	else {
-		file >> minTime;
+		int n;
+		file >> n;
+		int t;
+		char s[20];
+		for (int i = 0; i < n; i++) {
+			file >> t >> s;
+			Record.push_back({ t, s });
+		}
+		minTime = Record[0].first;
 	}
-	file.close();
+
 	initgraph(width, height, 1);
 
 	loadimage(&background, "res/back.png");
@@ -457,18 +466,29 @@ void linkGame::Descrition()
 	EndBatchDraw();
 }
 
+void linkGame::showCancel()
+{
+	BeginBatchDraw();
+
+	EndBatchDraw();
+}
+
 void linkGame::saveScore()
 {
 	char record[20];
-	sprintf_s(record, sizeof(record), "%smaxscore%d.txt", name, level);
-	if (curTime < minTime || minTime == 0) {
-		
-		std::ofstream file(record);
-		if (file.is_open()) {
-			file << curTime;	
+	sprintf_s(record, sizeof(record), "maxscore%d.txt",level);
+	Record.push_back({ curTime, name });
+	std::ranges::sort(Record);
+	int n = min(5, (int)Record.size());
+	std::ofstream file(record);
+	if (file.is_open()) 
+	{
+		file << n << '\n';
+		for (int i = 0; i < n; i++) {
+			file << Record[i].first << ' ' << Record[i].second << '\n';
 		}
-		file.close();
 	}
+	file.close();
 }
 
 void linkGame::saveDate()
@@ -727,7 +747,7 @@ void linkGame::Message(int val)
 	}
 }
 
-void linkGame::showRank(int level)
+void linkGame::showRank(int lev)
 {
 	BeginBatchDraw();
 
@@ -740,12 +760,39 @@ void linkGame::showRank(int level)
 	strcpy_s(f.lfFaceName, sizeof(f.lfFaceName), _T("微软雅黑")); //设置字体
 	settextstyle(&f);
 	setbkmode(TRANSPARENT);				//透明背景			
-
+	//显示当前难度
 	putimage(0, 0, &rank);
 	putimage(300, 800, &returnBotton);
 	char numText[30]{};
-	sprintf_s(numText, sizeof(numText), "%d", level + 1);
+	sprintf_s(numText, sizeof(numText), "%d", lev + 1);
 	outtextxy(330, 50, numText);
+	//显示排名
+	gettextstyle(&f);					
+	f.lfHeight = 50;
+	f.lfWidth = 20;
+	settextstyle(&f);
+	char record[20];
+	int t;
+	char s[20];
+	sprintf_s(record, sizeof(record), "maxscore%d.txt", lev + 1);
+	std::ifstream file(record);
+	if (!file.is_open()) {
+		return;
+	}
+	else {
+		int n = 0;
+		file >> n;
+		for (int i = 0; i < n; i++) {
+			file >> t >> s;
+			sprintf_s(record, sizeof(record), "%d.", i + 1);
+			outtextxy(145, 200 + i * 50, record);
+			outtextxy(180, 200 + i * 50, s);
+			sprintf_s(record, sizeof(record), "%.3lf", (double)t / 1000);
+			outtextxy(270, 200 + i * 50, record);
+		}
+	}
+	file.close();
+
 	EndBatchDraw();
 }
 

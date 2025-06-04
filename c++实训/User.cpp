@@ -1,6 +1,8 @@
 ﻿#include "User.h"
 #include<iostream>
 #include<fstream>
+#include<cstdio>
+#include<vector>
 
 const int b = 131, mod = 1e9 + 9, mod2 = 1e9 + 7;
 long long bpow[20], bpow2[20];
@@ -281,6 +283,68 @@ long long User::gethash(char* s, int n)
 		hash2 = (hash2 + (s[n - 1 - i] * bpow2[i]) % mod2) % mod2;
 	}
 	return hash1 | (hash2 << 31);
+}
+
+void User::cancel()
+{
+	std::string s_acount = acount;
+	std::string s;
+	
+	for (int i = 1; i <= 4; i++)
+	{
+		int n;
+		char record[20];
+		std::vector <std::pair<int, std::string>>r;
+		sprintf_s(record, sizeof(record), "maxscore%d.txt", i);
+		std::ifstream file(record);
+		file >> n;
+		r.resize(n);
+		for (int i = 0; i < n; i++)
+			file >> r[i].first >> r[i].second;
+		file.close();
+
+		std::ofstream file2(record);
+		int m = 0;
+		for (int i = 0; i < n; i++)
+		{
+			if (r[i].second == s_acount)continue;
+			m++;
+		}
+		file2 << m << '\n';
+		for (int i = 0; i < n; i++)
+		{
+			if (r[i].second == s_acount)continue;
+			file2 << r[i].first << ' ' << r[i].second << '\n';
+			
+		}
+	}
+
+	int n;
+	char record[20];
+	std::vector <std::pair<std::string, std::string>>r;
+	sprintf_s(record, sizeof(record), "user.txt");
+	std::ifstream file(record);
+	file >> n;
+	r.resize(n);
+	for (int i = 0; i < n; i++)
+		file >> r[i].first >> r[i].second;
+	file.close();
+
+	std::ofstream file2(record);
+	int m = 0;
+	for (int i = 0; i < n; i++)
+	{
+		if (r[i].first == s_acount)continue;
+		m++;
+	}
+	file2 << m << '\n';
+	for (int i = 0; i < n; i++)
+	{
+		if (r[i].first == s_acount)continue;
+		file2 << r[i].first << '\n' << r[i].second << '\n';
+
+	}
+
 }
 
 

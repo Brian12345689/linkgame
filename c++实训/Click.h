@@ -12,6 +12,7 @@ enum PICTURE {
 	Login,
 	message,
 	rank,
+	cancel,
 	levelchoose
 };
 
@@ -32,6 +33,7 @@ public:
 	void messagePicture(ExMessage& msg);							//注册和登录失败或成功的信息
 	void rankPicture(ExMessage& msg);					//排行榜
 	void introPicture(ExMessage& msg);		//教程界面
+	void cancelPicture();
 	int getDelay();
 	
 

@@ -43,6 +43,7 @@ public:
 	void displayRegister();				//展示注册界面
 	void displayLogin();				//展示登录界面
 	void Descrition();					//展示教程界面
+	void showCancel();					//注销界面
 	void saveScore();					//保存记录
 	void saveDate();					//保存数据
 	bool whetcherConnect(Point a, Point b);				//判断两点是否可连接，记录回溯
@@ -75,8 +76,8 @@ private:
 	unsigned long long minTime;
 	int whetherOver;
 	bool music;
-
 	char name[12];
+	std::vector<std::pair<int, std::string>>Record;
 	
 	IMAGE returnBotton;
 	IMAGE beginImage;

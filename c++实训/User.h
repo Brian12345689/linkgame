@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 #include<conio.h>
 #include<iostream>
 #include<string>
@@ -19,7 +19,9 @@ public:
 	void showRegister(bool see1, bool see2);
 	void showLogin(bool see);
 	long long gethash(char *s, int n);
+	void cancel();							//删除账号
 	char acount[12];
+	
 
 private:
 	std::unordered_map<std::string, long long>mp;
