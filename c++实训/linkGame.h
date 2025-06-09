@@ -7,6 +7,8 @@
 #include<algorithm>
 #include<iostream>
 #include"tool.h"
+#include<mmsystem.h>
+#pragma comment(lib,"Winmm.lib")
 
 struct Point {
 	int x, y;
@@ -55,12 +57,13 @@ public:
 	int checkLose();					//判断游戏是否结束
 	void Message(int val);				//展示注册或登录成功或失败的信息
 	void showRank(int level);			//排行榜界面
-	void getName(char s[12]);		//获取用户名
+	void getName(char s[12]);		   //获取用户名
 
 	int level;
 	unsigned long long curTime;
 	bool see;								//密码可见
 	bool see2;
+	bool musicOpen;
 	std::vector<std::vector<int>>mp;		
 	std::vector<std::vector<int>>nums;
 	std::vector<std::vector<int>>lines;
@@ -73,9 +76,9 @@ private:
 	int MAX;
 	int rows, cols;
 	int leftBound, topBound;
+	int chance;
 	unsigned long long minTime;
 	int whetherOver;
-	bool music;
 	char name[12];
 	std::vector<std::pair<int, std::string>>Record;
 	
@@ -84,7 +87,6 @@ private:
 	IMAGE levelchoose;
 	IMAGE beginBotton, beginBotton_choose;
 	IMAGE continueBotton, continueBotton_choose;
-	IMAGE musicBotton;
 	IMAGE background;
 	IMAGE block;
 	IMAGE block_choose;
@@ -112,6 +114,10 @@ private:
 	IMAGE logOut;
 	IMAGE rank;
 	IMAGE rankBotton;
+	IMAGE cancel; 
+	IMAGE cancelPicture;
+	IMAGE cancelSuccess;
+	IMAGE teach;
 };
 
 

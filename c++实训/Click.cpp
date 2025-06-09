@@ -7,18 +7,18 @@ const int width = 800, height = 950, blockSize = 55, LeftBound[4] = { 174,135,99
 
 //贴图坐标
 const int DELAY = 30;
-const int music_x = 0, music_y = 0;
 const int time_x = 625, time_y = 175;
 const int over_x = 100, over_y = 330;
-const int beginBotton_x = 300, beginBotton_y = 395;
-const int continue_x = 300, continue_y = 493;
-const int logout_x = 300, logout_y = 591;
+const int beginBotton_x = 180, beginBotton_y = 395;
+const int continue_x = 180, continue_y = 493;
+const int logout_x = 180, logout_y = 591;
 const int quit_x = 300, quit_y = 689;
-const int rank_x = 300, rank_y = 787;
-const int intro_x = 300, intro_y = 885;
+const int rank_x = 420, rank_y = 395;
+const int intro_x = 420, intro_y = 493;
+const int cancel_x = 420, cancel_y = 591;
 const int noConnect_x = 0, noConnect_y = 0;
-const int hint_x = 590, hint_y = 440;
-const int return_x = 590, return_y = 530;
+const int hint_x = 590, hint_y = 460;
+const int return_x = 590, return_y = 570;
 const int return_x2 = 266, return_y2 = 613;
 const int levelup_x = 483, levelup_y = 394;
 const int leveldown_x = 246, leveldown_y = 392;
@@ -38,6 +38,10 @@ Click::Click()
 	input_acount = false;
 	input_key = false;
 	input_key2 = false;
+	musicOpen = true;
+	loadimage(&musicBotton, "res/music.png");
+	loadimage(&musicBotton2, "res/musicclose.png");
+	mciSendString("play res/bgm.mp3 repeat", 0, 0, 0);
 }
 
 void Click::update()
@@ -68,10 +72,12 @@ void Click::update()
 
 void Click::show()
 {
+	BeginBatchDraw();
+
 	switch (picture)
 	{
 	case Enter:
-		game.displayEnter();
+		game.displayEnter(); 
 		break;
 	case begin:
 		game.showBegin();
@@ -90,16 +96,15 @@ void Click::show()
 		game.displayLevel();
 		break;
 	case Register:
-		BeginBatchDraw();
 		game.displayRegister();
-		user.showRegister(game.see, game.see2);
-		EndBatchDraw();
+		user.showAcount();
+		user.showKey(game.see);
+		user.showKey2(game.see2);
 		break;
 	case Login:
-		BeginBatchDraw();
 		game.displayLogin();
-		user.showLogin(game.see);
-		EndBatchDraw();
+		user.showAcount();
+		user.showKey(game.see);
 		break;
 	case message:
 		game.Message(messageVal);
@@ -107,9 +112,16 @@ void Click::show()
 	case rank:
 		game.showRank(rankLevel);
 		break;
+	case cancel:
+		game.showCancel();
+		user.showKey2(game.see2);
+		break;
 	default:
 		break;
 	}
+	//音乐按钮
+	putimagePNG(680, 20, musicOpen ? &musicBotton : &musicBotton2);
+	EndBatchDraw();
 }
 void Click::click()
 {
@@ -146,7 +158,7 @@ void Click::click()
 				messagePicture(msg);
 				break;
 			case cancel:
-
+				cancelPicture(msg);
 				break;
 			case rank:
 				rankPicture(msg);
@@ -154,7 +166,16 @@ void Click::click()
 			default:
 				break;
 			}
-			
+			//音乐按钮
+			if (msg.x > 680 && msg.x < 680 + 80 &&
+				msg.y > 20 && msg.y < 20 + 80) {
+				if (musicOpen)
+					mciSendString("pause res/bgm.mp3", 0, 0, 0);
+				else 
+					mciSendString("resume res/bgm.mp3", 0, 0, 0);
+				musicOpen ^= 1;
+				game.musicOpen = musicOpen;
+			}
 		}
 	}
 }
@@ -315,10 +336,15 @@ void Click::messagePicture(ExMessage& msg)
 	if (msg.x > sure_x && msg.x < sure_x + 120 &&
 		msg.y > sure_y && msg.y < sure_y + 50)
 	{
-		if (messageVal < 4) 
+		if (messageVal < 4)
 		{
 			picture = Register;
 		}
+		else if (messageVal == 7) {
+			picture = Enter;
+		}
+		else if (messageVal == 8)
+			picture = cancel;
 		else picture = Login;
 	}
 }
@@ -345,11 +371,48 @@ void Click::rankPicture(ExMessage& msg)
 
 void Click::introPicture(ExMessage& msg)
 {
-
+	if (msg.x > 300 && msg.x < 500 &&
+		msg.y > 800 && msg.y < 860)
+		{
+			picture = begin;
+	}
 }
 
-void Click::cancelPicture()
+void Click::cancelPicture(ExMessage& msg)
 {
+	if (msg.x > key2_x && msg.x < key2_x + 240 &&
+		msg.y > key2_y && msg.y < key2_y + 40)
+	{
+		input_key2 = true;
+	}
+	else if (msg.x > key2_x + 250 && msg.x < key2_x + 250 + 61 &&
+		msg.y > key2_y && msg.y < key2_y + 40)
+	{
+		game.see2 = 1 - game.see2;
+	}
+	else 
+	{
+		if (msg.x > back_x && msg.x < back_x + 120 &&
+			msg.y > back_y && msg.y < back_y + 50)
+		{
+			picture = begin;
+			game.see2 = 0;
+			user.initKey2();
+		}
+		else if (msg.x > sure_x && msg.x < sure_x + 120 &&
+			msg.y > sure_y && msg.y < sure_y + 50)
+		{
+			int val = user.checkCancel();
+			messageVal = val;
+			if (val == 7) {
+				user.cancel();
+				user.init();
+			}
+			picture = message;
+		}
+		input_key2 = false;
+	}
+
 }
 
 void Click::registerPicture(ExMessage& msg)
@@ -432,13 +495,18 @@ void Click::beginPicture(ExMessage& msg)
 	else if (msg.x > intro_x && msg.x < intro_x + 200 &&
 		msg.y > intro_y && msg.y < intro_y + 60)
 	{
-
+		picture = description;
 	}
 	else if (msg.x > logout_x && msg.x < logout_x + 200 &&
 		msg.y > logout_y && msg.y < logout_y + 60) 
 	{
 		user.init();
 		picture = Enter;
+	}
+	if (msg.x > cancel_x && msg.x < cancel_x + 200 &&
+		msg.y > cancel_y && msg.y < cancel_y + 60)
+	{
+		picture = cancel;
 	}
 }
 

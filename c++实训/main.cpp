@@ -22,6 +22,5 @@ int main()
 
 	Click c;
 	c.update();
-
 	return 0;
 }

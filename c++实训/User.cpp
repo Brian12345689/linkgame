@@ -34,6 +34,7 @@ User::User()
 			file >> Key;
 			mp[Acount] = Key;
 		}
+		file.close();
 	}
 	//预处理基数幂
 	bpow[0] = 1;
@@ -57,6 +58,7 @@ void User::saveUser()
 		{
 			file << x << '\n' << y << '\n';
 		}
+		file.close();
 	}
 }
 
@@ -72,6 +74,16 @@ void User::init()
 		key2[i] = '\0';
 		invisibleKey2[i] = '\0';
 		acount[i] = '\0';
+	}
+}
+
+void User::initKey2()
+{
+	key2_n = 0;
+	for (int i = 0; i < 12; i++)
+	{
+		key2[i] = '\0';
+		invisibleKey2[i] = '\0';
 	}
 }
 
@@ -150,7 +162,7 @@ void User::inputKey2()
 		{
 			return;
 		}
-		//Backspac
+		//Backspace
 		else if (c == 8)
 		{
 			if (key2_n > 0)
@@ -216,7 +228,18 @@ int User::checkLogin()
 	return 6;
 }
 
-void User::showRegister(bool see1, bool see2)
+int User::checkCancel()
+{
+	if (key_n != key2_n)return 8;
+	for (int i = 0; i < key_n; i++)
+	{
+		if (key[i] != key2[i])
+			return 8;
+	}
+	return 7;
+}
+
+void User::showKey2(bool see2)
 {
 
 	setcolor(RGB(0, 0, 0));				//设置字体颜色
@@ -229,14 +252,6 @@ void User::showRegister(bool see1, bool see2)
 	settextstyle(&f);
 	setbkmode(TRANSPARENT);				//透明背景
 
-	if (see1)
-	{
-		outtextxy(313, 441, key);
-	}
-	else 
-	{
-		outtextxy(313, 441, invisibleKey);
-	}
 	if (see2)
 	{
 		outtextxy(313, 501, key2);
@@ -245,11 +260,9 @@ void User::showRegister(bool see1, bool see2)
 	{
 		outtextxy(313, 501, invisibleKey2);
 	}
-	outtextxy(313, 381, acount);
-
 }
 
-void User::showLogin(bool see)
+void User::showKey(bool see)
 {
 	setcolor(RGB(0, 0, 0));				//设置字体颜色
 	LOGFONT	f;							//字体变量
@@ -260,7 +273,6 @@ void User::showLogin(bool see)
 	strcpy_s(f.lfFaceName, sizeof(f.lfFaceName), _T("微软雅黑")); //设置字体
 	settextstyle(&f);
 	setbkmode(TRANSPARENT);				//透明背景
-
 
 	if (see) 
 	{
@@ -270,8 +282,21 @@ void User::showLogin(bool see)
 	{
 		outtextxy(313, 441, invisibleKey);
 	}
-	outtextxy(313, 381, acount);
+}
 
+void User::showAcount()
+{
+	setcolor(RGB(0, 0, 0));				//设置字体颜色
+	LOGFONT	f;							//字体变量
+	gettextstyle(&f);					//获取
+	f.lfHeight = 25;
+	f.lfWidth = 12;
+	f.lfQuality = ANTIALIASED_QUALITY;	//抗锯齿
+	strcpy_s(f.lfFaceName, sizeof(f.lfFaceName), _T("微软雅黑")); //设置字体
+	settextstyle(&f);
+	setbkmode(TRANSPARENT);				//透明背景
+
+	outtextxy(313, 381, acount);
 }
 
 long long User::gethash(char* s, int n)
@@ -289,7 +314,7 @@ void User::cancel()
 {
 	std::string s_acount = acount;
 	std::string s;
-	
+	mp.erase(s_acount);
 	for (int i = 1; i <= 4; i++)
 	{
 		int n;
@@ -342,9 +367,8 @@ void User::cancel()
 	{
 		if (r[i].first == s_acount)continue;
 		file2 << r[i].first << '\n' << r[i].second << '\n';
-
 	}
-
+	file2.close();
 }
 
 

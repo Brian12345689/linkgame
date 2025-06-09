@@ -33,7 +33,7 @@ public:
 	void messagePicture(ExMessage& msg);							//注册和登录失败或成功的信息
 	void rankPicture(ExMessage& msg);					//排行榜
 	void introPicture(ExMessage& msg);		//教程界面
-	void cancelPicture();
+	void cancelPicture(ExMessage& msg);
 	int getDelay();
 	
 
@@ -51,5 +51,9 @@ private:
 	bool input_key2;
 	int messageVal;					//错误信息
 	int rankLevel;					//当前展示的排行榜对于的难度
+	bool musicOpen;
+
+	IMAGE musicBotton;
+	IMAGE musicBotton2;
 };
 

@@ -3,22 +3,23 @@
 const int prime[] = { 2, 2 ,2 ,2, 2, 2, 3 ,3, 3, 3, 5, 5, 5, 7, 11, 13, 17, 19, 23, 29 };
 const int MAXS[4] = { 50, 100, 200, 350 };
 const int row[4] = { 4, 6 , 8, 10 }, col[4] = { 4, 6, 8, 10 };
+const int Chance[4] = { 10, 8, 6, 4 };
 const int width = 800, height = 950, blockSize = 55, LeftBound[4] = { 174,135,99,25 }, TopBound[4] = { 304,284,252,119 };
 
 //贴图坐标
 const int DELAY = 30;
-const int music_x = 0, music_y = 0;
 const int time_x = 625, time_y = 175;
 const int over_x = 100, over_y = 330;
-const int beginBotton_x = 300, beginBotton_y = 395;
-const int continue_x = 300, continue_y = 493;
-const int logout_x = 300, logout_y = 591;
+const int beginBotton_x = 180, beginBotton_y = 395;
+const int continue_x = 180, continue_y = 493;
+const int logout_x = 180, logout_y = 591;
 const int quit_x = 300, quit_y = 689;
-const int rank_x = 300, rank_y = 787;
-const int intro_x = 300, intro_y = 885;
+const int rank_x = 420, rank_y = 395;
+const int intro_x = 420, intro_y = 493;
+const int cancel_x = 420, cancel_y = 591;
 const int noConnect_x = 100, noConnect_y = 330;
-const int hint_x = 590, hint_y = 440;
-const int return_x = 590, return_y = 530;
+const int hint_x = 590, hint_y = 460;
+const int return_x = 590, return_y = 570;
 const int return_x2 = 266, return_y2 = 613;
 const int levelup_x = 483, levelup_y = 394;
 const int leveldown_x = 246, leveldown_y = 392;
@@ -38,32 +39,14 @@ std::mt19937 gen(rd());
 
 linkGame::linkGame()
 {
-	music = true;
 	whetherOver = 0;
 	level = 1;
 	curTime = 0;
 	see = 0;
 	see2 = 0;
+	musicOpen = true;
 
-	char record[20];
-	sprintf_s(record, sizeof(record), "maxscore%d.txt", level);
-	std::ifstream file(record);
-	if (!file.is_open()) {
-		minTime = 0;
-	}
-	else {
-		int n;
-		file >> n;
-		int t;
-		char s[20];
-		for (int i = 0; i < n; i++) {
-			file >> t >> s;
-			Record.push_back({ t, s });
-		}
-		minTime = Record[0].first;
-	}
-
-	initgraph(width, height, 1);
+	initgraph(width, height, 0);
 
 	loadimage(&background, "res/back.png");
 	loadimage(&block, "res/block.png");
@@ -104,7 +87,10 @@ linkGame::linkGame()
 	loadimage(&logOut, "res/logout.png");
 	loadimage(&rank, "res/rank.png");
 	loadimage(&rankBotton, "res/rankBotton.png");
-	//loadimage(&musicBotton, "res/music.png");
+	loadimage(&cancel, "res/cancel.png");
+	loadimage(&cancelPicture, "res/cancelPicture.png");
+	loadimage(&cancelSuccess, "res/cancelSuccess.png");
+	loadimage(&teach, "res/teach.png");
 }
 
 void linkGame::init()
@@ -117,25 +103,43 @@ void linkGame::init()
 	MAX = MAXS[level - 1];
 	leftBound = LeftBound[level - 1];
 	topBound = TopBound[level - 1];
+	chance = Chance[level - 1];
 	mp.clear();
 	lines.clear();
 	nums.clear();
 	choose.clear();
 	pre.clear();
 	dir.clear();
-
 	mp.resize(rows + 2, std::vector<int>(cols + 2));
 	lines.resize(rows + 2, std::vector<int>(cols + 2));
 	nums.resize(rows, std::vector<int>(cols));
 	choose.resize(rows, std::vector<int>(cols));
 	pre.resize(rows + 2, std::vector<Point>(cols + 2));
 	dir.resize(rows + 2, std::vector<int>(cols + 2));
-	for(int i = 0; i < rows; i++)
+	for (int i = 0; i < rows; i++)
 		for (int j = 0; j < cols; j++) {
 			mp[i + 1][j + 1] = 1;
 			nums[i][j] = 1;
 			choose[i][j] = 0;
 		}
+
+	Record.clear();
+	char record[20];
+	sprintf_s(record, sizeof(record), "maxscore%d.txt", level);
+	std::ifstream file(record);
+	if (file.is_open()) {
+		int n;
+		file >> n;
+		int t;
+		char s[20];
+		for (int i = 0; i < n; i++) {
+			file >> t >> s;
+			Record.push_back({ t, s });
+		}
+		if (n != 0)minTime = Record[0].first;
+		else minTime = 0;
+		file.close();
+	}
 	biuldMap();
 	
 }
@@ -150,13 +154,13 @@ void linkGame::init2()
 		MAX = MAXS[level - 1];
 		leftBound = LeftBound[level - 1];
 		topBound = TopBound[level - 1];
+		chance = Chance[level - 1];
 		mp.clear();
 		lines.clear();
 		nums.clear();
 		choose.clear();
 		pre.clear();
 		dir.clear();
-
 		mp.resize(rows + 2, std::vector<int>(cols + 2));
 		lines.resize(rows + 2, std::vector<int>(cols + 2));
 		nums.resize(rows, std::vector<int>(cols));
@@ -176,7 +180,22 @@ void linkGame::init2()
 		file >> curTime;
 		file.close();
 	}
-
+	char record[20];
+	sprintf_s(record, sizeof(record), "maxscore%d.txt", level);
+	std::ifstream file2(record);
+	if (file2.is_open()) {
+		int n;
+		file2 >> n;
+		int t;
+		char s[20];
+		for (int i = 0; i < n; i++) {
+			file2 >> t >> s;
+			Record.push_back({ t, s });
+		}
+		if (n != 0)minTime = Record[0].first;
+		else minTime = 0;
+		file2.close();
+	}
 }
 
 bool linkGame::play()
@@ -255,6 +274,11 @@ void linkGame::clear(Point a, Point b)
 		else {
 			nums[b.x][b.y] = num2;
 		}
+		if (musicOpen)
+		{
+			mciSendString("close res/clear.mp3", 0, 0, 0);
+			mciSendString("play res/clear.mp3", 0, 0, 0);
+		}
 		updateShowLines(a, b);
 	}
 	
@@ -288,7 +312,6 @@ void linkGame::clear(Point a, Point b)
 
 void linkGame::updateNums()
 {
-	BeginBatchDraw();
 
 	setcolor(RGB(0, 0, 0));				//设置字体颜色
 	LOGFONT	f;							//字体变量
@@ -318,7 +341,6 @@ void linkGame::updateNums()
 				outtextxy(x + 3, y + 17, numText);
 		}
 	}
-
 	//展示时间
 	gettextstyle(&f);					
 	f.lfHeight = 50;
@@ -326,7 +348,13 @@ void linkGame::updateNums()
 	settextstyle(&f);
 	sprintf_s(numText, sizeof(numText), "%.3lf", (double)curTime / 1000);
 	outtextxy(time_x, time_y, numText);
-	EndBatchDraw();
+	//提示次数
+	gettextstyle(&f);
+	f.lfHeight = 30;
+	f.lfWidth = 10;
+	settextstyle(&f);
+	sprintf_s(numText, sizeof(numText), "%d", chance);
+	outtextxy(725, 530, numText);
 }
 
 int linkGame::findGcd(int a, int b)
@@ -341,7 +369,6 @@ int linkGame::findGcd(int a, int b)
 
 void linkGame::updateWindow()
 {
-	BeginBatchDraw();
 	putimage(0, 0, &background);
 	putimage(hint_x, hint_y, &hint);
 	putimage(return_x, return_y, &returnBotton);
@@ -359,8 +386,6 @@ void linkGame::updateWindow()
 		}
 	showLines();
 	updateNums();
-	
-	EndBatchDraw();
 }
 
 
@@ -379,7 +404,6 @@ bool linkGame::checkWin()
 
 void linkGame::displayLevel()
 {
-	BeginBatchDraw();
 
 	putimage(0, 0, &levelchoose);
 	setcolor(RGB(0, 0, 0));				//设置字体颜色
@@ -395,14 +419,11 @@ void linkGame::displayLevel()
 	char numText[30]{};
 	sprintf_s(numText, sizeof(numText), "%d", level);
 	outtextxy(level_x, level_y, numText);
-
-	EndBatchDraw();
 }
 
 
 void linkGame::displayOver()
 {
-	BeginBatchDraw();
 
 	if (whetherOver == 1) 
 	{
@@ -414,22 +435,19 @@ void linkGame::displayOver()
 	}
 	putimage(again_x, again_y, &again);
 	putimage(quit_x, quit_y, &quit);
-
-	EndBatchDraw();
 }
 
 void linkGame::displayEnter()
 {
-	BeginBatchDraw();
 	putimage(0, 0, &beginImage);
 	putimage(register_x, register_y, &registerBotton);
 	putimage(login_x, login_y, &loginBotton);
 	putimage(quit_x, quit_y, &quit);
-	EndBatchDraw();
 }
 
 void linkGame::displayRegister()
 {
+	putimage(0, 0, &beginImage);
 	putimage(input_x, input_y, &Register);
 	if (see) {
 		putimagePNG(key_x + 250, key_y, &canSee);
@@ -447,6 +465,7 @@ void linkGame::displayRegister()
 
 void linkGame::displayLogin()
 {
+	putimage(0, 0, &beginImage);
 	putimage(input_x, input_y, &Login);
 	if (see) {
 		putimagePNG(key_x + 250, key_y, &canSee);
@@ -459,18 +478,20 @@ void linkGame::displayLogin()
 
 void linkGame::Descrition()
 {
-	BeginBatchDraw();
-
-	
-
-	EndBatchDraw();
+	putimage(0, 0, &teach);
+	putimage(300, 800, &returnBotton);
 }
 
 void linkGame::showCancel()
 {
-	BeginBatchDraw();
-
-	EndBatchDraw();
+	putimage(0, 0, &beginImage);
+	putimage(input_x, input_y, &cancelPicture);
+	if (see2) {
+		putimagePNG(key2_x + 250, key2_y, &canSee);
+	}
+	else {
+		putimagePNG(key2_x + 250, key2_y, &notSee);
+	}
 }
 
 void linkGame::saveScore()
@@ -643,6 +664,8 @@ void linkGame::showLines()
 
 void linkGame::getHint()
 {
+	if (chance == 0)return;
+	chance--;
 	for (int i = 0; i < rows * cols; i++) {
 		int x1 = i / cols, y1 = i % cols;
 		if (mp[x1 + 1][y1 + 1] == 0)
@@ -667,7 +690,6 @@ void linkGame::showBegin()
 
 	int timer = 0;
 
-	BeginBatchDraw();
 	putimage(0, 0, &beginImage);
 	putimage(beginBotton_x, beginBotton_y, &beginBotton);
 	putimage(continue_x, continue_y, &continueBotton);
@@ -675,8 +697,7 @@ void linkGame::showBegin()
 	putimage(logout_x, logout_y, &logOut);
 	putimage(rank_x, rank_y, &rankBotton);
 	putimage(intro_x, intro_y, &intro);
-	//putimage(music_x, music_y, &musicBotton);
-	EndBatchDraw();
+	putimage(cancel_x, cancel_y, &cancel);
 }
 
 
@@ -742,6 +763,12 @@ void linkGame::Message(int val)
 	case 5:
 		putimage(x, y, &keyWrong);
 		break;
+	case 7:
+		putimage(x, y, &cancelSuccess);
+		break;
+	case 8:
+		putimage(x, y, &keyWrong);
+		break;
 	default:
 		break;
 	}
@@ -749,8 +776,6 @@ void linkGame::Message(int val)
 
 void linkGame::showRank(int lev)
 {
-	BeginBatchDraw();
-
 	setcolor(RGB(0, 0, 0));				//设置字体颜色
 	LOGFONT	f;							//字体变量
 	gettextstyle(&f);					//获取
@@ -788,12 +813,11 @@ void linkGame::showRank(int lev)
 			outtextxy(145, 200 + i * 50, record);
 			outtextxy(180, 200 + i * 50, s);
 			sprintf_s(record, sizeof(record), "%.3lf", (double)t / 1000);
-			outtextxy(270, 200 + i * 50, record);
+			outtextxy(470, 200 + i * 50, record);
 		}
 	}
 	file.close();
 
-	EndBatchDraw();
 }
 
 void linkGame::getName(char s[12])

@@ -11,13 +11,16 @@ public:
 	User();
 	void saveUser();
 	void init();
+	void initKey2();
 	void inputKey();
 	void inputAcount();
 	void inputKey2();
 	int checkRegister();
 	int checkLogin();
-	void showRegister(bool see1, bool see2);
-	void showLogin(bool see);
+	int checkCancel();
+	void showKey2(bool see2);
+	void showKey(bool see);
+	void showAcount();
 	long long gethash(char *s, int n);
 	void cancel();							//删除账号
 	char acount[12];
